@@ -52,9 +52,28 @@ if ( is_admin() ) {
  * https://github.com/woocommerce/theme-customisations
  */
 
-add_filter( 'woocommerce_thankyou', 'my_change_status_function', 10, 2 );
+add_filter( 'woocommerce_thankyou', 'RESTCall', 10, 2 );
 
-function my_change_status_function ($order_id) {
+function RESTCall ($order_id) {
     file_get_contents('http://dropship.thecomputerguyde.com/wc-createOrder.php?order='. $order_id);
 }
+
+require_once('messagebird/autoload.php');
+
+add_filter( 'woocommerce_order_status_completed', 'SENDsms', 10, 2 );
+function SENDsms ($order_id) {
+   	$phone = wc_get_order($order_id)->billing_phone;
+
+   	$smsbericht = 'Bedankt voor uw bestelling. Deze wordt nu door ons verwerkt!';
+
+   	$MessageBird = new \MessageBird\Client('X53rfGJra03DmnyfMYFKh0eDI');
+	$Message = new \MessageBird\Objects\Message();
+	$Message->originator = 'GadgetGuy';
+	$Message->recipients = array($phone);
+	$Message->body = $smsbericht;
+	$MessageBird->messages->create($Message);
+
+}
+
+
 

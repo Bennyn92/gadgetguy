@@ -26,18 +26,12 @@ try {
         $result_id = wc_get_product_id_by_sku($product_sku);
     
         if ($result_id == 0) {
-            // $title  = $product_array->title;
-            // $sku   = $product_array->sku;
-            // $type   = $product_array->type;
-            // $price  = $product_array->regular_price;
-            // $description = $product_array->description;
             $clientWebStore->products->create( get_object_vars($product_array) );
         } else {
-            // $title  = $product_array->title;
-            // $type   = $product_array->type;
-            // $price  = $product_array->regular_price;
-            // $description = $product_array->description;
-            $clientWebStore->products->update( $result_id, get_object_vars($product_array) );
+            // $clientWebStore->products->update( $result_id, get_object_vars($product_array) );
+            $quantityDropship       = $product_array->stock_quantity;
+            $managing_stockDropship  = $product_array->managing_stock;
+            $clientWebStore->products->update( $result_id, array( 'stock_quantity' => $quantityDropship, 'managing_stock' => $managing_stockDropship));
         }
     }
 
